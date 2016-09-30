@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">InventoryApp</string>
+    <string name="app_name">Inventory App</string>
+
+    <string name="action_save">Save Product</string>
+    <string name="action_delete">Delete Product</string>
+
+    <string name="editor_insert_failed">Failed to insert a new product.</string>
+    <string name="editor_insert_successful">Successfully inserted new product.</string>
+
+    <string name="editor_update_failed">Failed to update a new product.</string>
+    <string name="editor_update_successful">Successfully updated new product.</string>
 </resources>
