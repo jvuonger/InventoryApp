@@ -1,0 +1,17 @@
+package com.jamesvuong.inventoryapp;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+
+/**
+ * Created by jvuonger on 9/30/16.
+ */
+
+public class EditorActivity extends AppCompatActivity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_editor);
+    }
+}
