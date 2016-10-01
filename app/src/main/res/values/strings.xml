@@ -12,4 +12,6 @@
 
     <string name="editor_title_edit">Edit a Product</string>
     <string name="editor_title_add">Add a Product</string>
+
+    <string name="buy_button">Buy</string>
 </resources>

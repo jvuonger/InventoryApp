@@ -27,7 +27,7 @@ import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
 
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final int PRODUCT_LOADER = 1;
-    
+
     private Uri mCurrentProductUri;
 
     EditText mNameEditText;

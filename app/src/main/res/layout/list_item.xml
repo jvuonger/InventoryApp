@@ -26,12 +26,20 @@
             android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="#AEB6BD"  />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textAppearance="?android:textAppearanceSmall" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/count"
+    <Button
+        android:id="@+id/buy_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:textAppearance="?android:textAppearanceLarge" />
+        android:text="@string/buy_button"
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 </LinearLayout>
