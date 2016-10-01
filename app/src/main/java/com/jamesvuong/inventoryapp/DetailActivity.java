@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -63,14 +64,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
-    private int adjustAvailability(Context context, Uri itemUri, int newCount) {
+    private int adjustAvailability(Uri itemUri, int newCount) {
         if(newCount < 0) return 0;
 
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_COUNT, newCount );
-        int numRowsUpdated = context.getContentResolver().update(itemUri, values, null, null);
+        int numRowsUpdated = getContentResolver().update(itemUri, values, null, null);
 
         return numRowsUpdated;
+    }
+
+    private int deleteProduct(Uri itemUri) {
+        return getContentResolver().delete(itemUri, null, null);
     }
 
     @Override
@@ -104,14 +109,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             mDecreaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    adjustAvailability(getBaseContext(), mCurrentProductUri,count-1);
+                    adjustAvailability(mCurrentProductUri,count-1);
                 }
             });
 
             mIncreaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    adjustAvailability(getBaseContext(), mCurrentProductUri,count+1);
+                    adjustAvailability(mCurrentProductUri,count+1);
                 }
             });
         }
@@ -147,6 +152,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         switch (item.getItemId()) {
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
+                showDeleteConfirmationDialog();
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
@@ -154,5 +160,32 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmationDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the postivie and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_dialog_message);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Delete" button, so delete the pet.
+                deleteProduct(mCurrentProductUri);
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked the "Cancel" button, so dismiss the dialog
+                // and continue editing the pet.
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

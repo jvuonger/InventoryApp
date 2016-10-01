@@ -14,5 +14,9 @@
     <string name="editor_title_edit">Edit a Product</string>
     <string name="editor_title_add">Add a Product</string>
 
+    <string name="delete_dialog_message">Would you like to permanently delete all product information?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
     <string name="buy_button">Buy</string>
 </resources>
