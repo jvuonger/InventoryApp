@@ -10,6 +10,7 @@
     <string name="editor_update_failed">Failed to update a new product.</string>
     <string name="editor_update_successful">Successfully updated new product.</string>
 
+    <string name="detail_view_title">Product Detail</string>
     <string name="editor_title_edit">Edit a Product</string>
     <string name="editor_title_add">Add a Product</string>
 

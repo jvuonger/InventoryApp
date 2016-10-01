@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/activity_margin">
+
+    <!-- Name -->
+    <TextView
+        android:id="@+id/product_name_label"
+        style="@style/detail_label"
+        android:text="Name: "/>
+
+    <TextView
+        android:id="@+id/product_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/product_name_label"/>
+
+    <!-- Price -->
+    <TextView
+        android:id="@+id/product_price_label"
+        style="@style/detail_label"
+        android:text="Price: "
+        android:layout_below="@id/product_name_label"/>
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/product_name_label"
+        android:layout_toRightOf="@id/product_price_label"/>
+
+    <!-- Availability -->
+
+    <TextView
+        android:id="@+id/product_availability_label"
+        style="@style/detail_label"
+        android:text="Availability: "
+        android:layout_below="@id/product_price_label"/>
+
+    <LinearLayout
+        android:id="@+id/availability_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/product_price_label"
+        android:layout_toRightOf="@id/product_availability_label">
+
+        <Button
+            android:id="@+id/decrease_count_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"/>
+
+        <TextView
+            android:id="@+id/product_availability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+        <Button
+            android:id="@+id/increase_count_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"/>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -4,6 +4,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.icu.text.DecimalFormat;
+import android.icu.text.NumberFormat;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,8 +48,8 @@ public class ProductsCursorAdapter extends CursorAdapter {
         final int count = cursor.getInt(cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_COUNT));
 
         tvName.setText(name);
-        tvPrice.setText("$" + price.toString());
-        tvCount.setText(String.valueOf(count));
+        tvPrice.setText("Cost: $" + String.format("%.2f", price));
+        tvCount.setText("Availability: " + String.valueOf(count));
 
         //Bind buy event to button
         Button btnBuy = (Button) view.findViewById(R.id.buy_button);
@@ -61,7 +63,6 @@ public class ProductsCursorAdapter extends CursorAdapter {
     }
 
     // Decrease product count by 1
-    // TODO: FIX NullPointer error
     private void buyProduct(Context context, Uri itemUri, int currentCount) {
         int newCount = (currentCount >= 1) ? currentCount - 1 : 0;
         ContentValues values = new ContentValues();
