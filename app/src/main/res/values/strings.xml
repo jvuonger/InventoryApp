@@ -18,5 +18,11 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
 
+    <string name="supplier_order_button">Order More Supplies</string>
+
     <string name="buy_button">Buy</string>
+
+    <string name="product_name_label">Product Name:</string>
+    <string name="product_price_label">Price: </string>
+    <string name="product_availability_label">Availability: </string>
 </resources>

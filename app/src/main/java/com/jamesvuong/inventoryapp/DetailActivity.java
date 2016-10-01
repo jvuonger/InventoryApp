@@ -1,30 +1,23 @@
 package com.jamesvuong.inventoryapp;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.jamesvuong.inventoryapp.data.ProductContract;
 import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
 
 import static android.content.ContentValues.TAG;
@@ -43,6 +36,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     TextView mPriceTextView;
     Button mDecreaseButton;
     Button mIncreaseButton;
+    Button mOrderSupplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +48,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mPriceTextView = (TextView) findViewById(R.id.product_price);
         mDecreaseButton = (Button) findViewById(R.id.decrease_count_button);
         mIncreaseButton = (Button) findViewById(R.id.increase_count_button);
+        mOrderSupplyButton = (Button) findViewById(R.id.supply_order_button);
 
         Intent intent = getIntent();
         mCurrentProductUri = intent.getData();
@@ -104,7 +99,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             mNameTextView.setText(name);
             mCountTextView.setText(Integer.toString(count));
-            mPriceTextView.setText(Double.toString(price));
+            mPriceTextView.setText("$" + String.format("%.2f", price));
 
             mDecreaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,6 +112,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 @Override
                 public void onClick(View v) {
                     adjustAvailability(mCurrentProductUri,count+1);
+                }
+            });
+
+            mOrderSupplyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    composeEmail(new String[]{"abc@gmail.com"}, "Supply Order for ");
                 }
             });
         }
@@ -187,5 +189,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    public void composeEmail(String[] addresses, String subject) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }

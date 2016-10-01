@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD"  />
+            android:textStyle="bold"
+            android:textColor="#f98900"  />
 
         <TextView
             android:id="@+id/count"

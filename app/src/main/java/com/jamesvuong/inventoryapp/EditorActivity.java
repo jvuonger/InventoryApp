@@ -94,9 +94,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String countString = mCountEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
 
-        if (mCurrentProductUri == null &&
-                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(countString) &&
-                TextUtils.isEmpty(priceString)) {return;}
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(countString)
+                || TextUtils.isEmpty(priceString)) {
+            Toast.makeText(this,"Please fill out all values", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
@@ -105,31 +107,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(ProductEntry.COLUMN_PRODUCT_COUNT, Integer.valueOf(countString));
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, Double.valueOf(priceString));
 
-        if(mCurrentProductUri == null) {
-            Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
+        Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
-            // Show a toast message depending on whether or not the insertion was successful
-            if (newUri == null) {
-                // If the row ID is -1, then there was an error with insertion.
-                Toast.makeText(this, getString(R.string.editor_insert_failed), Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the insertion was successful and we can display a toast with the row ID.
-                Toast.makeText(this, getString(R.string.editor_insert_successful), Toast.LENGTH_SHORT).show();
-            }
+        // Show a toast message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the row ID is -1, then there was an error with insertion.
+            Toast.makeText(this, getString(R.string.editor_insert_failed), Toast.LENGTH_SHORT).show();
         } else {
-            int rowsAffected = getContentResolver().update(mCurrentProductUri, values,null, null);
-
-            // Show a toast message depending on whether or not the update was successful.
-            if (rowsAffected == 0) {
-                // If no rows were affected, then there was an error with the update.
-                Toast.makeText(this, getString(R.string.editor_update_failed),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.editor_update_successful),
-                        Toast.LENGTH_SHORT).show();
-            }
+            // Otherwise, the insertion was successful and we can display a toast with the row ID.
+            Toast.makeText(this, getString(R.string.editor_insert_successful), Toast.LENGTH_SHORT).show();
+            finish();
         }
+
     }
 
     @Override
@@ -141,30 +130,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        if (mCurrentProductUri == null) {
-            MenuItem menuItem = menu.findItem(R.id.action_delete);
-            menuItem.setVisible(false);
-        }
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Save product to database
                 saveProduct();
-                // Exit activity
-                finish();
-                return true;
-            // Respond to a click on the "Delete" menu option
-            case R.id.action_delete:
-
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
