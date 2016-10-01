@@ -1,7 +1,9 @@
 package com.jamesvuong.inventoryapp;
 
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -9,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.jamesvuong.inventoryapp.data.ProductDbHelper;
@@ -38,6 +41,18 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         mProductsListView = (ListView) findViewById(R.id.list_view);
         mCursorAdapter = new ProductsCursorAdapter(this, null);
         mProductsListView.setAdapter(mCursorAdapter);
+
+        mProductsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+
+                Uri currentPetUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
+                intent.setData(currentPetUri);
+
+                startActivity(intent);
+            }
+        });
 
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }

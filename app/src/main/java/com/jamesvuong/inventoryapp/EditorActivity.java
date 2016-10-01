@@ -2,10 +2,15 @@ package com.jamesvuong.inventoryapp;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -20,7 +25,9 @@ import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
  * Created by jvuonger on 9/30/16.
  */
 
-public class EditorActivity extends AppCompatActivity{
+public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final int PRODUCT_LOADER = 1;
+    
     private Uri mCurrentProductUri;
 
     EditText mNameEditText;
@@ -35,6 +42,51 @@ public class EditorActivity extends AppCompatActivity{
         mNameEditText = (EditText) findViewById(R.id.edit_text_product_name);
         mCountEditText = (EditText) findViewById(R.id.edit_text_product_count);
         mPriceEditText = (EditText) findViewById(R.id.edit_text_product_price);
+
+        Intent intent = getIntent();
+        mCurrentProductUri = intent.getData();
+
+        if(mCurrentProductUri == null) {
+            setTitle(R.string.editor_title_add);
+        } else {
+            setTitle(R.string.editor_title_edit);
+            getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                this,   // Parent activity context
+                mCurrentProductUri,        // Table to query
+                null,     // Projection to return
+                null,            // No selection clause
+                null,            // No selection arguments
+                null             // Default sort order
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if(cursor.moveToFirst()) {
+            int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
+            int countColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_COUNT);
+            int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
+
+            // Extract out the value from the Cursor for the given column index
+            String name = cursor.getString(nameColumnIndex);
+            int count = cursor.getInt(countColumnIndex);
+            double price = cursor.getDouble(priceColumnIndex);
+
+            mNameEditText.setText(name);
+            mCountEditText.setText(Integer.toString(count));
+            mPriceEditText.setText(Double.toString(price));
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     private void saveProduct() {
