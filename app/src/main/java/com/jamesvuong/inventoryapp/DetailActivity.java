@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
@@ -37,6 +40,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     Button mDecreaseButton;
     Button mIncreaseButton;
     Button mOrderSupplyButton;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mDecreaseButton = (Button) findViewById(R.id.decrease_count_button);
         mIncreaseButton = (Button) findViewById(R.id.increase_count_button);
         mOrderSupplyButton = (Button) findViewById(R.id.supply_order_button);
+        mImageView = (ImageView) findViewById(R.id.product_image_detail);
 
         Intent intent = getIntent();
         mCurrentProductUri = intent.getData();
@@ -91,15 +96,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
             int countColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_COUNT);
             int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
+            int imageColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_IMAGE);
 
             // Extract out the value from the Cursor for the given column index
             final String name = cursor.getString(nameColumnIndex);
             final int count = cursor.getInt(countColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
+            byte[] imageByteArray = cursor.getBlob(imageColumnIndex);
 
             mNameTextView.setText(name);
             mCountTextView.setText(Integer.toString(count));
             mPriceTextView.setText("$" + String.format("%.2f", price));
+
+            Bitmap bmp = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+            mImageView.setImageBitmap(bmp);
 
             mDecreaseButton.setOnClickListener(new View.OnClickListener() {
                 @Override

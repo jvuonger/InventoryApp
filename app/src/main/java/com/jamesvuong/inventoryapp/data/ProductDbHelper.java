@@ -4,17 +4,20 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static java.sql.Types.BLOB;
+
 /**
  * Created by jvuonger on 9/30/16.
  */
 
 public class ProductDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Inventory.db";
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INTEGER";
     private static final String REAL_TYPE = " REAL";
+    private static final String BLOB_TYPE = " BLOB";
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_PRODUCTS_TABLE =
@@ -22,7 +25,9 @@ public class ProductDbHelper extends SQLiteOpenHelper {
                     ProductContract.ProductEntry._ID + INT_TYPE + " PRIMARY KEY AUTOINCREMENT," +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_NAME + TEXT_TYPE + " NOT NULL" + COMMA_SEP +
                     ProductContract.ProductEntry.COLUMN_PRODUCT_COUNT + INT_TYPE + " NOT NULL DEFAULT 0" + COMMA_SEP +
-                    ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE + REAL_TYPE + " NOT NULL DEFAULT 0.00)";
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE + REAL_TYPE + " NOT NULL DEFAULT 0.00" + COMMA_SEP +
+                    ProductContract.ProductEntry.COLUMN_PRODUCT_IMAGE + BLOB_TYPE +
+                    ")";
 
     private static final String SQL_DELETE_PRODUCTS_TABLE =
             "DROP TABLE IF EXISTS " + ProductContract.ProductEntry.TABLE_NAME;

@@ -4,8 +4,12 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
@@ -16,26 +20,39 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jamesvuong.inventoryapp.data.ProductContract;
 import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+import static com.jamesvuong.inventoryapp.R.id.count;
+import static com.jamesvuong.inventoryapp.R.id.price;
+import static com.jamesvuong.inventoryapp.data.ProductProvider.LOG_TAG;
+
 /**
  * Created by jvuonger on 9/30/16.
  */
 
-public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class EditorActivity extends AppCompatActivity{
     private static final int PRODUCT_LOADER = 1;
-
+    private static final int FILE_SELECT_CODE = 2;
     private Uri mCurrentProductUri;
 
     EditText mNameEditText;
     EditText mCountEditText;
     EditText mPriceEditText;
+    Button mImageButton;
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +62,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText = (EditText) findViewById(R.id.edit_text_product_name);
         mCountEditText = (EditText) findViewById(R.id.edit_text_product_count);
         mPriceEditText = (EditText) findViewById(R.id.edit_text_product_price);
+        mImageButton = (Button) findViewById(R.id.product_image);
+        mImageView = (ImageView) findViewById(R.id.image_view);
+
+
+        mImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonImageClick();
+            }
+        });
 
         mPriceEditText.setFilters(new InputFilter[] {
                 new DigitsKeyListener(Boolean.FALSE, Boolean.TRUE) {
@@ -80,46 +107,36 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         if(mCurrentProductUri == null) {
             setTitle(R.string.editor_title_add);
-        } else {
-            setTitle(R.string.editor_title_edit);
-            getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
         }
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(
-                this,   // Parent activity context
-                mCurrentProductUri,        // Table to query
-                null,     // Projection to return
-                null,            // No selection clause
-                null,            // No selection arguments
-                null             // Default sort order
-        );
+    private void buttonImageClick() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), FILE_SELECT_CODE);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if(cursor.moveToFirst()) {
-            int nameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
-            int countColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_COUNT);
-            int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            // Extract out the value from the Cursor for the given column index
-            String name = cursor.getString(nameColumnIndex);
-            int count = cursor.getInt(countColumnIndex);
-            double price = cursor.getDouble(priceColumnIndex);
+        if (requestCode == FILE_SELECT_CODE) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    Uri imageUri = data.getData();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
 
-            mNameEditText.setText(name);
-            mCountEditText.setText(Integer.toString(count));
-            mPriceEditText.setText(Double.toString(price));
+                    mImageView = (ImageView) findViewById(R.id.image_view);
+                    mImageView.setImageBitmap(bitmap);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 
     private void saveProduct() {
         String nameString = mNameEditText.getText().toString().trim();
@@ -145,12 +162,24 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
+        if(mImageView.getDrawable() == null) {
+            Toast.makeText(this,"You must upload an image.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bitmap imageBitMap = ((BitmapDrawable)mImageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        imageBitMap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] imageByteArray = bos.toByteArray();
+
+
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
         values.put(ProductEntry.COLUMN_PRODUCT_COUNT, count);
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
+        values.put(ProductEntry.COLUMN_PRODUCT_IMAGE, imageByteArray);
 
         Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 

@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
 
+import static com.jamesvuong.inventoryapp.R.id.price;
+
 /**
  * Created by jvuonger on 9/30/16.
  */
@@ -106,6 +108,12 @@ public class ProductProvider extends ContentProvider {
             throw new IllegalArgumentException("Product requires price not negative");
         }
 
+        // Check that the image is not null
+        byte[] image = contentValues.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
+        if (image == null) {
+            throw new IllegalArgumentException("Product requires image to be set");
+        }
+
         long id = db.insert(ProductEntry.TABLE_NAME, null, contentValues);
 
         if (id == -1) {
@@ -162,6 +170,14 @@ public class ProductProvider extends ContentProvider {
             Double price = values.getAsDouble(ProductEntry.COLUMN_PRODUCT_PRICE);
             if (price == null || price < 0.00) {
                 throw new IllegalArgumentException("Product requires price not negative");
+            }
+        }
+
+        // Check that the price is non-negative
+        if (values.containsKey(ProductEntry.COLUMN_PRODUCT_IMAGE)) {
+            byte[] image = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_IMAGE);
+            if (image == null) {
+                throw new IllegalArgumentException("Product requires image to be set");
             }
         }
 

@@ -28,4 +28,5 @@
     <string name="product_name_label">Product Name:</string>
     <string name="product_price_label">Price: </string>
     <string name="product_availability_label">Availability: </string>
+    <string name="product_image_label">Image: </string>
 </resources>
