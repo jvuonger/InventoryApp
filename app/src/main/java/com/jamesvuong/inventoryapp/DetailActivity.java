@@ -93,7 +93,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             int priceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
 
             // Extract out the value from the Cursor for the given column index
-            String name = cursor.getString(nameColumnIndex);
+            final String name = cursor.getString(nameColumnIndex);
             final int count = cursor.getInt(countColumnIndex);
             double price = cursor.getDouble(priceColumnIndex);
 
@@ -118,7 +118,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             mOrderSupplyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    composeEmail(new String[]{"abc@gmail.com"}, "Supply Order for ");
+                    composeEmail(new String[]{"abc@gmail.com"}, "Supply Order for " + name);
                 }
             });
         }

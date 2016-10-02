@@ -12,7 +12,10 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.DigitsKeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -42,6 +45,35 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText = (EditText) findViewById(R.id.edit_text_product_name);
         mCountEditText = (EditText) findViewById(R.id.edit_text_product_count);
         mPriceEditText = (EditText) findViewById(R.id.edit_text_product_price);
+
+        mPriceEditText.setFilters(new InputFilter[] {
+                new DigitsKeyListener(Boolean.FALSE, Boolean.TRUE) {
+                    int beforeDecimal = 5, afterDecimal = 2;
+
+                    @Override
+                    public CharSequence filter(CharSequence source, int start, int end,
+                                               Spanned dest, int dstart, int dend) {
+                        String temp = mPriceEditText.getText() + source.toString();
+
+                        if (temp.equals(".")) {
+                            return "0.";
+                        }
+                        else if (temp.toString().indexOf(".") == -1) {
+                            // no decimal point placed yet
+                            if (temp.length() > beforeDecimal) {
+                                return "";
+                            }
+                        } else {
+                            temp = temp.substring(temp.indexOf(".") + 1);
+                            if (temp.length() > afterDecimal) {
+                                return "";
+                            }
+                        }
+
+                        return super.filter(source, start, end, dest, dstart, dend);
+                    }
+                }
+        });
 
         Intent intent = getIntent();
         mCurrentProductUri = intent.getData();
@@ -100,12 +132,25 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
+        int count = Integer.valueOf(countString);
+        double price = Double.valueOf(priceString);
+
+        if(count < 0) {
+            Toast.makeText(this,"You must input a real number for the count field.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(price < 0.0) {
+            Toast.makeText(this,"You must input a real price.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Create a ContentValues object where column names are the keys,
         // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
-        values.put(ProductEntry.COLUMN_PRODUCT_COUNT, Integer.valueOf(countString));
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, Double.valueOf(priceString));
+        values.put(ProductEntry.COLUMN_PRODUCT_COUNT, count);
+        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, price);
 
         Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
