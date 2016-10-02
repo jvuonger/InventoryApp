@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.jamesvuong.inventoryapp.data.ProductDbHelper;
 import com.jamesvuong.inventoryapp.data.ProductContract.ProductEntry;
@@ -22,7 +23,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     private static final int PRODUCT_LOADER = 1;
     private ListView mProductsListView;
     private ProductsCursorAdapter mCursorAdapter;
-    private ProductDbHelper mDbHelper;
+    private View noProductTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,10 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        noProductTextView = (TextView) findViewById(R.id.no_product_text_view);
+
+        mProductsListView.setEmptyView(noProductTextView);
+
         getSupportLoaderManager().initLoader(PRODUCT_LOADER, null, this);
     }
 
@@ -72,6 +78,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mCursorAdapter.swapCursor(cursor);
+
     }
 
     @Override

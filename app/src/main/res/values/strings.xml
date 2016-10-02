@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Inventory App</string>
 
+    <string name="no_inventory_message">There are no products.  To add a new product, click on the
+        + button at the bottom right corner.</string>
+
     <string name="action_save">Save Product</string>
     <string name="action_delete">Delete Product</string>
 

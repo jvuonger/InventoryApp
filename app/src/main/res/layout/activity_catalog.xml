@@ -10,11 +10,18 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jamesvuong.inventoryapp.CatalogActivity">
 
+    <TextView
+        android:id="@+id/no_product_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_inventory_message"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:gravity="center"/>
+
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
